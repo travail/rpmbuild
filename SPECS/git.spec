@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 
 Name: 		git
-Version: 	2.8.0
+Version: 	2.9.1
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPL
@@ -146,7 +146,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
-%doc README COPYING Documentation/*.txt
+%doc README.md COPYING Documentation/*.txt
 %{!?_without_docs: %doc Documentation/*.html Documentation/howto}
 %{!?_without_docs: %doc Documentation/technical}
 %{_sysconfdir}/bash_completion.d
