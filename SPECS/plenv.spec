@@ -35,6 +35,7 @@ cd plugins/perl-build
 git checkout -b %{perl_build_version} refs/tags/%{perl_build_version}
 cd %{_builddir}/%{name}
 # Build and install Perl.
+# Emulate installation by "plenv install X.X.X" with default configuration options.
 mkdir -p %{buildroot}%{plenvroot}/versions/%{perl_version}
 cd perl-%{perl_version}
 sh Configure -de -Dprefix=%{plenvroot}/versions/%{perl_version} -Dusedevel -A'eval:scriptdir=%{plenvroot}/versions/%{perl_version}/bin'
