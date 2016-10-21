@@ -4,7 +4,7 @@ Summary:  A System for Allowing the Control of Process State on UNIX
 Name: supervisor
 Version: 3.0
 %define prever b2
-Release: 13.1
+Release: 13.1%{?dist}
 
 License: ZPLv2.1 and BSD and MIT
 Group: System Environment/Base
