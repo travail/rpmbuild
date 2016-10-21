@@ -5,7 +5,7 @@
 Name: rbenv
 Summary: An interpreter of object-oriented scripting language
 Version: v1.0.0
-Release: 1
+Release: 1%{?dist}
 
 License: MIT
 Group: Development/Languages

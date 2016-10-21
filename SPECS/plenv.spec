@@ -5,7 +5,7 @@
 Name: plenv
 Summary: Perl binary manager
 Version: 2.2.0
-Release: 1
+Release: 1%{?dist}
 
 License: MIT
 Group: Development/Languages

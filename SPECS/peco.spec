@@ -1,7 +1,7 @@
 Name: peco
 Summary: Simplistic interactive filtering tool
 Version: 0.3.6
-Release: 1
+Release: 1%{?dist}
 
 License: MIT
 Group: Development/Tools
