@@ -20,6 +20,15 @@
 # NOTE: "vendor" is used in upgrade/downgrade check, so you can't
 # change these, has to be exactly as is.
 
+%define _prefix /usr/local/q4m
+%define _bindir %{_prefix}/bin
+%define _datadir %{_prefix}/share
+%define _includedir %{_prefix}/include
+%define _libdir %{_prefix}/lib
+%define _mandir %{_datadir}/man
+
+%define q4m_version 0.9.14
+
 %global mysql_vendor Oracle and/or its affiliates
 %global mysqldatadir /var/lib/mysql
 
@@ -84,7 +93,7 @@
 %endif
 
 
-Name:           mysql-%{product_suffix}
+Name:           mysql-q4m-%{product_suffix}
 Summary:        A very fast and reliable SQL database server
 Group:          Applications/Databases
 Version:        5.6.16
@@ -103,6 +112,7 @@ Source6:        mysql-embedded-check.c
 Source7:        %{compatsrc}
 Source90:       filter-provides.sh
 Source91:       filter-requires.sh
+Source100:      0.9.14.tar.gz
 Patch0:         mysql-5.6.14-mysql-install.patch
 BuildRequires:  cmake
 BuildRequires:  perl
@@ -147,16 +157,16 @@ Requires:       procps
 Requires:       shadow-utils
 Requires:       net-tools
 %if 0%{?commercial}
-Obsoletes:      mysql-community-server < %{version}-%{release}
-Requires:       mysql-enterprise-client%{?_isa} = %{version}-%{release}
-Requires:       mysql-enterprise-common%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-server < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-client%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-enterprise-common%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-client%{?_isa} = %{version}-%{release}
-Requires:       mysql-community-common%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-client%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-common%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql-server < %{version}-%{release}
-Provides:       mysql-server = %{version}-%{release}
-Provides:       mysql-server%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-server < %{version}-%{release}
+Provides:       mysql-q4m-server = %{version}-%{release}
+Provides:       mysql-q4m-server%{?_isa} = %{version}-%{release}
 %if 0%{?systemd}
 Requires(post):   systemd
 Requires(preun):  systemd
@@ -192,14 +202,14 @@ to run and administer a MySQL server.
 Summary:        MySQL database client applications and tools
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-client < %{version}-%{release}
-Requires:       mysql-enterprise-libs%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-client < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-libs%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-libs%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-libs%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql < %{version}-%{release}
-Provides:       mysql = %{version}-%{release}
-Provides:       mysql%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m < %{version}-%{release}
+Provides:       mysql-q4m = %{version}-%{release}
+Provides:       mysql-q4m%{?_isa} = %{version}-%{release}
 
 %description    client
 This package contains the standard MySQL clients and administration
@@ -209,10 +219,10 @@ tools.
 Summary:        MySQL database common files for server and client libs
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-common < %{version}-%{release}
+Obsoletes:      mysql-q4m-community-common < %{version}-%{release}
 %endif
-Provides:       mysql-common = %{version}-%{release}
-Provides:       mysql-common%{?_isa} = %{version}-%{release}
+Provides:       mysql-q4m-common = %{version}-%{release}
+Provides:       mysql-q4m-common%{?_isa} = %{version}-%{release}
 
 %description    common
 This packages contains common files needed by MySQL client library,
@@ -223,14 +233,14 @@ MySQL database server, and MySQL embedded server.
 Summary:        Test suite for the MySQL database server
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-test < %{version}-%{release}
-Requires:       mysql-enterprise-server%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-test < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-server%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-server%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-server%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql-test < %{version}-%{release}
-Provides:       mysql-test = %{version}-%{release}
-Provides:       mysql-test%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-test < %{version}-%{release}
+Provides:       mysql-q4m-test = %{version}-%{release}
+Provides:       mysql-q4m-test%{?_isa} = %{version}-%{release}
 
 
 %description    test
@@ -242,14 +252,14 @@ database server.
 Summary:        Development header files and libraries for MySQL database client applications
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-devel < %{version}-%{release}
-Requires:       mysql-enterprise-libs%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-devel < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-libs%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-libs%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-libs%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql-devel < %{version}-%{release}
-Provides:       mysql-devel = %{version}-%{release}
-Provides:       mysql-devel%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-devel < %{version}-%{release}
+Provides:       mysql-q4m-devel = %{version}-%{release}
+Provides:       mysql-q4m-devel%{?_isa} = %{version}-%{release}
 
 %description    devel
 This package contains the development header files and libraries necessary
@@ -259,14 +269,14 @@ to develop MySQL client applications.
 Summary:        Shared libraries for MySQL database client applications
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-libs < %{version}-%{release}
-Requires:       mysql-enterprise-common%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-libs < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-common%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-common%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-common%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql-libs < %{version}-%{release}
-Provides:       mysql-libs = %{version}-%{release}
-Provides:       mysql-libs%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-libs < %{version}-%{release}
+Provides:       mysql-q4m-libs = %{version}-%{release}
+Provides:       mysql-q4m-libs%{?_isa} = %{version}-%{release}
 
 %description    libs
 This package contains the shared libraries for MySQL client
@@ -275,9 +285,9 @@ applications.
 %package        libs-compat
 Summary:        Shared compat libraries for MySQL 5.1 database client applications
 Group:          Applications/Databases
-Obsoletes:      mysql-libs-compat < %{version}-%{release}
-Provides:       mysql-libs-compat = %{version}-%{release}
-Provides:       mysql-libs-compat%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-libs-compat < %{version}-%{release}
+Provides:       mysql-q4m-libs-compat = %{version}-%{release}
+Provides:       mysql-q4m-libs-compat%{?_isa} = %{version}-%{release}
 
 %description    libs-compat
 This package contains the shared compat libraries for MySQL 5.1 client
@@ -287,14 +297,14 @@ applications.
 Summary:        MySQL embedded library
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-embedded < %{version}-%{release}
-Requires:       mysql-enterprise-common%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-embedded < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-common%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-common%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-common%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql-embedded < %{version}-%{release}
-Provides:       mysql-embedded = %{version}-%{release}
-Provides:       mysql-emdedded%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-embedded < %{version}-%{release}
+Provides:       mysql-q4m-embedded = %{version}-%{release}
+Provides:       mysql-q4m-emdedded%{?_isa} = %{version}-%{release}
 
 %description    embedded
 This package contains the mysql server as an embedded library.
@@ -312,24 +322,26 @@ For a description of MySQL see the base MySQL RPM or http://www.mysql.com/
 Summary:        Development header files and libraries for MySQL as an embeddable library
 Group:          Applications/Databases
 %if 0%{?commercial}
-Obsoletes:      mysql-community-embedded-devel < %{version}-%{release}
-Requires:       mysql-enterprise-devel%{?_isa} = %{version}-%{release}
-Requires:       mysql-enterprise-embedded%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-community-embedded-devel < %{version}-%{release}
+Requires:       mysql-q4m-enterprise-devel%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-enterprise-embedded%{?_isa} = %{version}-%{release}
 %else
-Requires:       mysql-community-devel%{?_isa} = %{version}-%{release}
-Requires:       mysql-community-embedded%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-devel%{?_isa} = %{version}-%{release}
+Requires:       mysql-q4m-community-embedded%{?_isa} = %{version}-%{release}
 %endif
-Obsoletes:      mysql-embedded-devel < %{version}-%{release}
-Provides:       mysql-embedded-devel = %{version}-%{release}
-Provides:       mysql-embedded-devel%{?_isa} = %{version}-%{release}
+Obsoletes:      mysql-q4m-embedded-devel < %{version}-%{release}
+Provides:       mysql-q4m-embedded-devel = %{version}-%{release}
+Provides:       mysql-q4m-embedded-devel%{?_isa} = %{version}-%{release}
 
 %description    embedded-devel
 This package contains files needed for developing applicatison using
 the embedded version of the MySQL server.
 
 %prep
-%setup -q -T -a 0 -a 7 -c -n %{src_dir}
+%setup -q -T -a 0 -a 7 -a 100 -c -n %{src_dir}
+mv q4m-%{q4m_version} %{src_dir}/storage/q4m
 cd %{src_dir}
+cp storage/q4m/support-files/install.sql support-files/install-q4m.sql
 %patch0 -p1
 
 %build
@@ -349,16 +361,33 @@ export CFLAGS="%{optflags} -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOU
 export CXXFLAGS="$CFLAGS %{?el6:-felide-constructors} -fno-rtti -fno-exceptions"
 pushd mysql-%{compatver}
 %configure \
-    --with-readline \
+    --prefix=%{_prefix} \
     --without-debug \
-    --enable-shared \
-    --localstatedir=/var/lib/mysql \
-    --with-unix-socket-path=/var/lib/mysql/mysql.sock \
+    --localstatedir=%{_prefix} \
+    --with-unix-socket-path=%{_prefix}/mysql.sock \
     --with-mysqld-user="mysql" \
-    --with-extra-charsets=all \
-    --enable-local-infile \
     --enable-largefile \
+    --with-mysqld-ldflags="-static" \
+    --with-client-ldflags="-static" \
+    --enable-assembler \
     --enable-thread-safe-client \
+    --enable-local-infile \
+    --with-charset=utf8 \
+    --with-zlib-dir=bundled \
+    --with-big-tables \
+    --with-pic \
+    --with-extra-charsets=complex \
+    --with-readline \
+    --enable-shared \
+    --with-fast-mutexes \
+    --without-embedded-server \
+    --with-partition \
+    --with-plugins=innobase,myisam \
+    --without-plugin-daemon_example \
+    --without-plugin-ftexample \
+    --without-plugin-example \
+    --without-docs \
+    --without-man \
 %if 0%{?rhel} == 6
     --with-ssl=%{_prefix} \
     --with-embedded-server \
@@ -392,16 +421,28 @@ mkdir debug
   CFLAGS=$(echo "${CFLAGS}" | sed -e 's/-O2 / /' -e 's/-Wp,-D_FORTIFY_SOURCE=2/ /')
   CXXFLAGS=$(echo "${CFLAGS}" | sed -e 's/-O2 / /' -e 's/-Wp,-D_FORTIFY_SOURCE=2/ /') 
   cmake ../%{src_dir} \
+           -DCMAKE_INSTALL_PREFIX=%{_prefix} \
            -DBUILD_CONFIG=mysql_release \
            -DINSTALL_LAYOUT=RPM \
            -DCMAKE_BUILD_TYPE=Debug \
            -DWITH_INNODB_MEMCACHED=1 \
-           -DINSTALL_LIBDIR="%{_lib}/mysql" \
-           -DINSTALL_PLUGINDIR="%{_lib}/mysql/plugin" \
+           -DINSTALL_LIBDIR="%{_libdir}/mysql" \
+           -DINSTALL_PLUGINDIR="%{_libdir}/mysql/plugin" \
            -DMYSQL_UNIX_ADDR="%{mysqldatadir}/mysql.sock" \
            -DFEATURE_SET="%{feature_set}" \
            %{?ssl_option} \
            -DCOMPILATION_COMMENT="%{compilation_comment_debug}" \
+           -DDEFAULT_CHARSET=utf8 \
+           -DDEFAULT_COLLATION=utf8_general_ci \
+           -DWITH_EXTRA_CHARSETS=complex \
+           -DWITH_PIC=1 \
+           -DENABLED_LOCAL_INFILE=ON \
+           -DWITH_ZLIB=bundled \
+           -DWITH_UNIT_TESTS=OFF \
+           -DWITHOUT_DAEMON_EXAMPLE_STORAGE_ENGINE=1 \
+           -DWITHOUT_FTEXAMPLE_STORAGE_ENGINE=1 \
+           -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 \
+           -DWITH_FAST_MUTEXES=1 \
            -DMYSQL_SERVER_SUFFIX="%{?server_suffix}"
   echo BEGIN_DEBUG_CONFIG ; egrep '^#define' include/config.h ; echo END_DEBUG_CONFIG
   make %{?_smp_mflags} VERBOSE=1
@@ -412,16 +453,28 @@ mkdir release
 (
   cd release
   cmake ../%{src_dir} \
+           -DCMAKE_INSTALL_PREFIX=%{_prefix} \
            -DBUILD_CONFIG=mysql_release \
            -DINSTALL_LAYOUT=RPM \
            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
            -DWITH_INNODB_MEMCACHED=1 \
-           -DINSTALL_LIBDIR="%{_lib}/mysql" \
-           -DINSTALL_PLUGINDIR="%{_lib}/mysql/plugin" \
+           -DINSTALL_LIBDIR="%{_libdir}/mysql" \
+           -DINSTALL_PLUGINDIR="%{_libdir}/mysql/plugin" \
            -DMYSQL_UNIX_ADDR="%{mysqldatadir}/mysql.sock" \
            -DFEATURE_SET="%{feature_set}" \
            %{?ssl_option} \
            -DCOMPILATION_COMMENT="%{compilation_comment_release}" \
+           -DDEFAULT_CHARSET=utf8 \
+           -DDEFAULT_COLLATION=utf8_general_ci \
+           -DWITH_EXTRA_CHARSETS=complex \
+           -DWITH_PIC=1 \
+           -DENABLED_LOCAL_INFILE=ON \
+           -DWITH_ZLIB=bundled \
+           -DWITH_UNIT_TESTS=OFF \
+           -DWITHOUT_DAEMON_EXAMPLE_STORAGE_ENGINE=1 \
+           -DWITHOUT_FTEXAMPLE_STORAGE_ENGINE=1 \
+           -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 \
+           -DWITH_FAST_MUTEXES=1 \
            -DMYSQL_SERVER_SUFFIX="%{?server_suffix}"
   echo BEGIN_NORMAL_CONFIG ; egrep '^#define' include/config.h ; echo END_NORMAL_CONFIG
   make %{?_smp_mflags} VERBOSE=1
@@ -458,8 +511,8 @@ MBD=$RPM_BUILD_DIR/%{src_dir}
 
 # Ensure that needed directories exists
 install -d -m 0755 %{buildroot}%{_datadir}/mysql/SELinux/RHEL4
-install -d -m 0755 %{buildroot}/var/lib/mysql
-install -d -m 0755 %{buildroot}/var/run/mysqld
+install -d -m 0755 %{buildroot}%{_libdir}
+install -d -m 0755 %{buildroot}/var/run/q4m
 
 # Install all binaries
 cd $MBD/release
@@ -474,13 +527,12 @@ install -D -m 0644 %{SOURCE2} %{buildroot}%{_unitdir}/mysqld.service
 %else
 install -D -m 0755 $MBD/release/packaging/rpm-oel/mysql.init %{buildroot}%{_sysconfdir}/init.d/mysqld
 %endif
-install -D -m 0644 %{SOURCE3} %{buildroot}%{_prefix}/lib/tmpfiles.d/mysql.conf
+install -D -m 0644 %{SOURCE3} %{buildroot}/lib/tmpfiles.d/mysql.conf
 
 install -m 0755 $MBD/release/libmysqld/work/libmysqld.so.%{libmysqld_so_long} \
     %{buildroot}%{_libdir}/mysql/libmysqld.so.%{libmysqld_so_long}
 ln -s libmysqld.so.%{libmysqld_so_long} %{buildroot}%{_libdir}/mysql/libmysqld.so.%{libmysqld_so_major}
 ln -s libmysqld.so.%{libmysqld_so_long} %{buildroot}%{_libdir}/mysql/libmysqld.so
- 
 
 # Make library links
 install -d -m 0755 %{buildroot}%{_sysconfdir}/ld.so.conf.d
@@ -488,11 +540,11 @@ echo "%{_libdir}/mysql" > %{buildroot}%{_sysconfdir}/ld.so.conf.d/mysql-%{_arch}
 
 # multiarch support
 %ifarch %{multiarchs}
-mv %{buildroot}/%{_includedir}/mysql/my_config.h \
-   %{buildroot}/%{_includedir}/mysql/my_config_%{_arch}.h
-install -p -m 0644 %{SOURCE4} %{buildroot}/%{_includedir}/mysql/my_config.h
-mv %{buildroot}/%{_bindir}/mysql_config %{buildroot}/%{_bindir}/mysql_config-%{__isa_bits}
-install -p -m 0755 %{SOURCE5} %{buildroot}/%{_bindir}/mysql_config
+mv %{buildroot}%{_includedir}/mysql/my_config.h \
+   %{buildroot}%{_includedir}/mysql/my_config_%{_arch}.h
+install -p -m 0644 %{SOURCE4} %{buildroot}%{_includedir}/mysql/my_config.h
+mv %{buildroot}/%{_bindir}/mysql_config %{buildroot}%{_bindir}/mysql_config-%{__isa_bits}
+install -p -m 0755 %{SOURCE5} %{buildroot}%{_bindir}/mysql_config
 %endif
 
 # Install SELinux files in datadir
@@ -527,36 +579,36 @@ rm -rf var/*
 
 %pre server
 /usr/sbin/groupadd -g 27 -o -r mysql >/dev/null 2>&1 || :
-/usr/sbin/useradd -M -N -g mysql -o -r -d /var/lib/mysql -s /bin/bash \
+/usr/sbin/useradd -M -N -g mysql -o -r -d %{_prefix} -s /bin/bash \
     -c "MySQL Server" -u 27 mysql >/dev/null 2>&1 || :
 
 %post server
-datadir=$(/usr/bin/my_print_defaults server mysqld | grep '^--datadir=' | sed -n 's/--datadir=//p')
+datadir=$(%{_bindir}/my_print_defaults server mysqld | grep '^--datadir=' | sed -n 's/--datadir=//p')
 /bin/chmod 0755 "$datadir"
-/bin/touch /var/log/mysqld.log
+/bin/touch /var/log/q4m.log
 %if 0%{?systemd}
-%systemd_post mysqld.service
-/sbin/service mysqld enable >/dev/null 2>&1 || :
+%systemd_post a4m.service
+/sbin/service a4m enable >/dev/null 2>&1 || :
 %else
-/sbin/chkconfig --add mysqld
+/sbin/chkconfig --add q4m
 %endif
 
 %preun server
 %if 0%{?systemd}
-%systemd_preun mysqld.service
+%systemd_preun q4m.service
 %else
 if [ "$1" = 0 ]; then
-    /sbin/service mysqld stop >/dev/null 2>&1 || :
-    /sbin/chkconfig --del mysqld
+    /sbin/service q4m stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del q4m
 fi
 %endif
 
 %postun server
 %if 0%{?systemd}
-%systemd_postun_with_restart mysqld.service
+%systemd_postun_with_restart q4m.service
 %else
 if [ $1 -ge 1 ]; then
-    /sbin/service mysqld condrestart >/dev/null 2>&1 || :
+    /sbin/service q4m condrestart >/dev/null 2>&1 || :
 fi
 %endif
 
@@ -652,15 +704,15 @@ fi
 %attr(644, root, root) %{_datadir}/mysql/dictionary.txt
 %attr(644, root, root) %{_datadir}/mysql/innodb_memcached_config.sql
 %attr(644, root, root) %{_datadir}/mysql/magic
-%attr(644, root, root) %{_prefix}/lib/tmpfiles.d/mysql.conf
+%attr(644, root, root) /lib/tmpfiles.d/mysql.conf
 %if 0%{?systemd}
 %attr(644, root, root) %{_unitdir}/mysql.service
 %else
 %attr(755, root, root) %{_sysconfdir}/init.d/mysqld
 %endif
 %attr(644, root, root) %config(noreplace,missingok) %{_sysconfdir}/logrotate.d/mysql
-%dir %attr(755, mysql, mysql) /var/lib/mysql
-%dir %attr(755, mysql, mysql) /var/run/mysqld
+%dir %attr(755, mysql, mysql) %{_prefix}
+%dir %attr(755, mysql, mysql) /var/run/q4m
 
 %files common
 %defattr(-, root, root, -)
