@@ -120,6 +120,10 @@ sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} -
 /sbin/chkconfig --add %{name}
 %endif
 
+while /bin/true ; do
+    sleep 1
+    %{_bindir}/mysqladmin ping > /dev/null 2>&1 && break
+done
 %{_bindir}/mysql -uroot --host 127.0.0.1 --port %{mysql_port} < %{_prefix}/support-files/install-q4m.sql
 
 %preun
