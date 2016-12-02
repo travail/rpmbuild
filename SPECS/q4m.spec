@@ -9,6 +9,7 @@
 %define q4m_version 0.9.14
 %define mysql_user mysql
 %define mysql_port 13306
+%define debug_package %{nil}
 
 Name: q4m
 Summary: foo
@@ -119,7 +120,7 @@ sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} -
 /sbin/chkconfig --add %{name}
 %endif
 
-%{_bindir}/mysql -uroot < %{_prefix}/support-files/install-q4m.sql
+%{_bindir}/mysql -uroot --host 127.0.0.1 --port %{mysql_port} < %{_prefix}/support-files/install-q4m.sql
 
 %preun
 %if 0%{?rhel} == 7
