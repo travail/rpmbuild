@@ -10,6 +10,8 @@
 %define mysql_user mysql
 %define mysql_port 13306
 
+%{!?with_systemd: %global systemd 0}
+
 Name: q4m
 Summary: foo
 Version: %{q4m_version}
@@ -20,9 +22,23 @@ Group: Applications/Databases
 URL: https://q4m.github.io/
 Source0: mysql-%{mysql_version}.tar.gz
 Source1: %{name}-%{version}.tar.gz
+Source2: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
 BuildRequires: cmake ncurses-devel libaio-devel readline-devel
+%if 0%{?systemd}
+BuildRequires: systemd-units
+%endif
+
+%if 0%{?systemd}
+Requires(post):   systemd
+Requires(preun):  systemd
+Requires(postun): systemd
+%else
+Requires(post):   /sbin/chkconfig
+Requires(preun):  /sbin/chkconfig
+Requires(preun):  /sbin/service
+%endif
 
 %description
 Q4M (Queue for MySQL) is a message queue licensed under GPL that works as a pluggable storage engine of MySQL, designed to be robust, fast, flexible. It is already in production quality, and is used by several web services (see Users of Q4M).
@@ -71,12 +87,15 @@ make
 BUILD_DIR=$RPM_BUILD_DIR/mysql-%{mysql_version}
 make DESTDIR=%{buildroot} install
 install -D -m 0644 $BUILD_DIR/support-files/mysql-log-rotate %{buildroot}%{_sysconfdir}/logrotate.d/q4m
-install -D -m 0755 $BUILD_DIR/support-files/mysql.server %{buildroot}%{_sysconfdir}/init.d/q4m
+%if 0%{?systemd}
+install -D -m 0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}.service
+%else
+install -D -m 0755 $BUILD_DIR/support-files/mysql.server %{buildroot}%{_sysconfdir}/init.d/%{name}
+%endif
 install -D -m 0755 $BUILD_DIR/support-files/my-default.cnf %{buildroot}%{_prefix}/my.cnf
 install -D -m 0644 $BUILD_DIR/storage/q4m/support-files/install.sql %{buildroot}%{_prefix}/support-files/install-q4m.sql
 
 # Replace strings.
-# sed -i -e 's/\/usr\/bin/\/usr\/local\/q4m\/bin/' %{buildroot}%{_sysconfdir}/init.d/q4m
 sed -i -e 's/\/etc\/my\.cnf/\/usr\/local\/q4m\/my\.cnf/' %{buildroot}%{_prefix}/my.cnf
 sed -i -e 's/^basedir=$/\/usr\/local\/q4m/' %{buildroot}%{_prefix}/my.cnf
 sed -i -e 's/^datadir=$/\/usr\/local\/q4m\/data/' %{buildroot}%{_prefix}/my.cnf
@@ -93,17 +112,33 @@ rm -rf %{buildroot}%{_prefix}/sql-bench
 chown %{mysql_user}:%{mysql_user} %{_prefix}
 chown %{mysql_user}:%{mysql_user} -R %{_prefix}/data
 sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} --datadir %{_prefix}/data
-service %{name} start
-%{_bindir}/mysql -uroot < %{_prefix}/support-files/install-q4m.sql
+
+%if 0%{?systemd}
+/usr/bin/systemctl start %{name}.service
+/usr/bin/systemctl enable %{name}.service
+%else
+/sbin/service %{name} start
 /sbin/chkconfig --add %{name}
+%endif
+
+%{_bindir}/mysql -uroot < %{_prefix}/support-files/install-q4m.sql
 
 %preun
-service %{name} stop
+%if 0%{?systemd}
+/usr/bin/systemctl stop %{name}.service
+/usr/bin/systemctl disable %{name}.service
+%else
+/sbin/service %{name} stop
 /sbin/chkconfig --del %{name}
+%endif
 
 %files
 %defattr(-, root, root, -)
+%if 0%{?systemd}
+%{_unitdir}/%{name}.service
+%else
 %{_sysconfdir}/init.d/q4m
+%endif
 %{_sysconfdir}/logrotate.d/q4m
 
 %{_prefix}/COPYING
