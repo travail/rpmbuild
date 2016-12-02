@@ -10,8 +10,6 @@
 %define mysql_user mysql
 %define mysql_port 13306
 
-%{!?with_systemd: %global systemd 0}
-
 Name: q4m
 Summary: foo
 Version: %{q4m_version}
@@ -26,11 +24,11 @@ Source2: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
 BuildRequires: cmake ncurses-devel libaio-devel readline-devel
-%if 0%{?systemd}
+%if 0%{?rhel} == 7
 BuildRequires: systemd-units
 %endif
 
-%if 0%{?systemd}
+%if 0%{?rhel} == 7
 Requires(post):   systemd
 Requires(preun):  systemd
 Requires(postun): systemd
@@ -87,12 +85,12 @@ make
 BUILD_DIR=$RPM_BUILD_DIR/mysql-%{mysql_version}
 make DESTDIR=%{buildroot} install
 install -D -m 0644 $BUILD_DIR/support-files/mysql-log-rotate %{buildroot}%{_sysconfdir}/logrotate.d/q4m
-%if 0%{?systemd}
+%if 0%{?rhel} == 7
 install -D -m 0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}.service
 %else
 install -D -m 0755 $BUILD_DIR/support-files/mysql.server %{buildroot}%{_sysconfdir}/init.d/%{name}
 %endif
-install -D -m 0755 $BUILD_DIR/support-files/my-default.cnf %{buildroot}%{_prefix}/my.cnf
+install -D -m 0644 $BUILD_DIR/support-files/my-default.cnf %{buildroot}%{_prefix}/my.cnf
 install -D -m 0644 $BUILD_DIR/storage/q4m/support-files/install.sql %{buildroot}%{_prefix}/support-files/install-q4m.sql
 
 # Replace strings.
@@ -108,12 +106,12 @@ rm -rf %{buildroot}%{_prefix}/sql-bench
 
 %post
 /usr/sbin/groupadd -g 27 -o -r %{mysql_user} >/dev/null 2>&1 || :
-/usr/sbin/useradd -M -N -g mysql -o -r -d %{_prefix} -s /bin/bash -c "Q4M Server" %{mysql_user} >/dev/null 2>&1 || :
+/usr/sbin/useradd -M -N -g %{mysql_user} -o -r -d %{_prefix} -s /bin/bash -c "Q4M Server" -u 27 %{mysql_user} >/dev/null 2>&1 || :
 chown %{mysql_user}:%{mysql_user} %{_prefix}
 chown %{mysql_user}:%{mysql_user} -R %{_prefix}/data
 sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} --datadir %{_prefix}/data
 
-%if 0%{?systemd}
+%if 0%{?rhel} == 7
 /usr/bin/systemctl start %{name}.service
 /usr/bin/systemctl enable %{name}.service
 %else
@@ -124,7 +122,7 @@ sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} -
 %{_bindir}/mysql -uroot < %{_prefix}/support-files/install-q4m.sql
 
 %preun
-%if 0%{?systemd}
+%if 0%{?rhel} == 7
 /usr/bin/systemctl stop %{name}.service
 /usr/bin/systemctl disable %{name}.service
 %else
@@ -134,7 +132,7 @@ sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} -
 
 %files
 %defattr(-, root, root, -)
-%if 0%{?systemd}
+%if 0%{?rhel} == 7
 %{_unitdir}/%{name}.service
 %else
 %{_sysconfdir}/init.d/q4m
