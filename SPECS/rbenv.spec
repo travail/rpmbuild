@@ -4,8 +4,8 @@
 
 Name: rbenv
 Summary: An interpreter of object-oriented scripting language
-version: v1.0.0
-Release: 1
+Version: v1.0.0
+Release: 1%{?dist}
 
 License: MIT
 Group: Development/Languages
@@ -110,5 +110,5 @@ cp .vimrc %{buildroot}%{rbenvroot}
 %clean
 
 %changelog
-* Thu Jul 11 2016 travail <travail@gmail.com> v1.0.0
+* Thu Jul 11 2016 travail v1.0.0
 - Initial build with ruby-build v20160602 and ruby-2.3.1.

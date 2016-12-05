@@ -49,7 +49,7 @@ fi
 %files
 %doc CHANGES FAQ TODO examples/
 %{_bindir}/tmux
-%{_mandir}/man1/tmux.1.*
+%{_mandir}/man1/tmux.1*
 
 %changelog
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0-2

@@ -4,8 +4,8 @@
 
 Name: plenv
 Summary: Perl binary manager
-version: 2.2.0
-Release: 1
+Version: 2.2.0
+Release: 1%{?dist}
 
 License: MIT
 Group: Development/Languages
@@ -128,5 +128,5 @@ cd %{_builddir}/%{name}
 %clean
 
 %changelog
-* Thu Jul 11 2016 travail <travail@gmail.com> 2.2.0
+* Thu Jul 11 2016 travail 2.2.0
 - Initial build with perl-build 1.13 and perl-5.22.2.
