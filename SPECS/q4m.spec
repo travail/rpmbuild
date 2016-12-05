@@ -12,7 +12,7 @@
 %define debug_package %{nil}
 
 Name: q4m
-Summary: foo
+Summary: Queue for MySQL
 Version: %{q4m_version}
 Release: 1%{?dist}
 
@@ -208,3 +208,9 @@ fi
 %{_datadir}/ukrainian/
 
 %{_prefix}/support-files/
+
+%clean
+
+%changelog
+* Sun Dec 5 2016 travail 0.9.14
+- Initial build with MySQL 5.6.16.
