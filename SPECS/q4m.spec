@@ -75,6 +75,7 @@ cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
       -DWITHOUT_ARCHIVE_STORAGE_ENGINE=1 \
       -DWITHOUT_BLACKHOLE_STORAGE_ENGINE=1 \
       -DWITHOUT_FEDERATED_STORAGE_ENGINE=1 \
+      -DWITHOUT_INNOBASE_STORAGE_ENGINE=1 \
       -DWITHOUT_PERFSCHEMA_STORAGE_ENGINE=1 \
       -DWITHOUT_NDBCLUSTER_STORAGE_ENGINE=1 \
       -DWITH_INNODB_MEMCACHED=OFF \
@@ -96,8 +97,11 @@ install -D -m 0644 $BUILD_DIR/storage/q4m/support-files/install.sql %{buildroot}
 
 # Replace strings.
 sed -i -e 's/\/etc\/my\.cnf/\/usr\/local\/q4m\/my\.cnf/' %{buildroot}%{_prefix}/my.cnf
-sed -i -e 's/^basedir=$/\/usr\/local\/q4m/' %{buildroot}%{_prefix}/my.cnf
-sed -i -e 's/^datadir=$/\/usr\/local\/q4m\/data/' %{buildroot}%{_prefix}/my.cnf
+sed -i -e 's/\[mysqld\]/\[mysqld\]\ndefault-storage-engine\ \=\ MyISAM\ndefault-tmp-storage-engine\ \=\ MyISAM/' %{buildroot}%{_prefix}/my.cnf
+sed -i -e 's/^\#\ basedir\ \=\ \.\.\.\.\./basedir\ \=\ \/usr\/local\/q4m/' %{buildroot}%{_prefix}/my.cnf
+sed -i -e 's/^\#\ datadir\ \=\ \.\.\.\.\./datadir\ \=\ \/usr\/local\/q4m\/data/' %{buildroot}%{_prefix}/my.cnf
+sed -i -e 's/^\#\ port\ \=\ \.\.\.\.\./port\ \=\ %{mysql_port}/' %{buildroot}%{_prefix}/my.cnf
+sed -i -e 's/^\#\ socket\ \=\ \.\.\.\.\./socket\ \=\ \/usr\/local\/q4m\/mysql\.sock/' %{buildroot}%{_prefix}/my.cnf
 
 # Remove files no need to package.
 rm -rf %{buildroot}%{_prefix}/mysql-test
@@ -110,8 +114,9 @@ rm -rf %{buildroot}%{_prefix}/sql-bench
 /usr/sbin/useradd -M -N -g %{mysql_user} -o -r -d %{_prefix} -s /bin/bash -c "Q4M Server" -u 27 %{mysql_user} >/dev/null 2>&1 || :
 chown %{mysql_user}:%{mysql_user} %{_prefix}
 chown %{mysql_user}:%{mysql_user} -R %{_prefix}/data
-sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} --datadir %{_prefix}/data
+sudo -u %{mysql_user} %{_prefix}/scripts/mysql_install_db --basedir %{_prefix} --defaults-file=%{_prefix}/my.cnf
 
+# Start MySQL to install the engine QUEUE.
 %if 0%{?rhel} == 7
 /usr/bin/systemctl start %{name}.service
 /usr/bin/systemctl enable %{name}.service
@@ -124,7 +129,17 @@ while /bin/true ; do
     sleep 1
     %{_bindir}/mysqladmin ping > /dev/null 2>&1 && break
 done
-%{_bindir}/mysql -uroot --host 127.0.0.1 --port %{mysql_port} < %{_prefix}/support-files/install-q4m.sql
+%{_bindir}/mysql -uroot -e 'SHOW ENGINES' | grep QUEUE > /dev/null
+if [ $? != 0 ]; then
+    %{_bindir}/mysql -uroot --host 127.0.0.1 --port %{mysql_port} < %{_prefix}/support-files/install-q4m.sql
+fi
+
+# Stop MySQL.
+%if 0%{?rhel} == 7
+/usr/bin/systemctl stop %{name}.service
+%else
+/sbin/service %{name} stop
+%endif
 
 %preun
 %if 0%{?rhel} == 7
