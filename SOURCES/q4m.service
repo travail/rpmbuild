@@ -34,7 +34,7 @@ PermissionsStartOnly=true
 
 # Start main service
 # ExecStart=/usr/bin/mysqld_safe
-ExecStart=/usr/local/q4m/bin/mysqld_safe --basedir=/usr/local/q4m --datadir=/usr/local/q4m/data
+ExecStart=/usr/local/q4m/bin/mysqld_safe --basedir=/usr/local/q4m --datadir=/usr/local/q4m/data --pid-file=/usr/local/q4m/q4m.pid --log-error=/usr/local/q4m/q4m.log
 
 # Don't signal startup success before a ping works
 # ExecStartPost=/usr/bin/mysql-systemd-start post
